@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NanoDegreeInventoryApp</string>
+    <string name="hint_text">Click on the \"ADD ITEM\" button to add an item.</string>
+    <string name="string_modify_text">Enter new quantity of product</string>
+    <string name="error_item_name">At Least Three Characters</string>
+    <string name="error_item_price">Enter a valid Price</string>
+    <string name="error_item_quantity">Enter a valid Quantity</string>
+</resources>
