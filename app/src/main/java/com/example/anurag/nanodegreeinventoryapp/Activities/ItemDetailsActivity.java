@@ -21,11 +21,12 @@ import com.example.anurag.nanodegreeinventoryapp.Classes.MyApplication;
 import com.example.anurag.nanodegreeinventoryapp.R;
 
 public class ItemDetailsActivity extends AppCompatActivity implements View.OnClickListener {
-    static int quantity;
+     int quantity;
     Toolbar toolbar;
     Button mSale, mModify, mOrder, mDelete;
     ImageView imageView;
-    TextView tQuantity;
+    TextView tQuantity, tName;
+    String name = "XYZ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +35,21 @@ public class ItemDetailsActivity extends AppCompatActivity implements View.OnCli
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
-
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
         imageView = (ImageView) findViewById(R.id.imageView);
-        byte[] bytes = getIntent().getByteArrayExtra("image");
+        byte[] bytes = intent.getByteArrayExtra("image");
         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
         imageView.setBackground(bitmapDrawable);
-
+        tName = (TextView) findViewById(R.id.item_name);
+        tName.setText(name);
         mSale = (Button) findViewById(R.id.sale_button);
         mModify = (Button) findViewById(R.id.modify_button);
         mOrder = (Button) findViewById(R.id.order_button);
         mDelete = (Button) findViewById(R.id.delete_button);
         tQuantity = (TextView) findViewById(R.id.item_quantity);
-        tQuantity.setText(getIntent().getIntExtra("quantity", 0) + "");
-        quantity = getIntent().getIntExtra("quantity", 0);
+        quantity = MyApplication.getWritableDatabase().getQuantity(name);
+        tQuantity.setText(quantity + "");
         mSale.setOnClickListener(this);
         mModify.setOnClickListener(this);
         mOrder.setOnClickListener(this);
@@ -56,19 +59,16 @@ public class ItemDetailsActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        Intent i = getIntent();
-        String name = i.getStringExtra("name");
-        i.getByteArrayExtra("image");
         switch (id) {
             case R.id.sale_button:
                 if (quantity > 0) {
-                    quantity = quantity - 1;
-                    MyApplication.getWritableDatabase().updateItemQuantity(name, quantity);
+                    quantity=MyApplication.getWritableDatabase().getQuantity(name);
+                    quantity=quantity-1;
+                    MyApplication.getWritableDatabase().updateItemQuantity(name,quantity);
                     tQuantity.setText(quantity + "");
                 } else {
                     Toast.makeText(this, "No more items left", Toast.LENGTH_LONG).show();
                 }
-
                 break;
             case R.id.modify_button:
                 EditText editText = (EditText) findViewById(R.id.modify_text);
@@ -77,7 +77,6 @@ public class ItemDetailsActivity extends AppCompatActivity implements View.OnCli
                     Log.d("value", Integer.parseInt(textValue) + "");
                     MyApplication.getWritableDatabase().updateItemQuantity(name, Integer.parseInt(textValue));
                     tQuantity.setText(textValue);
-                    quantity = Integer.parseInt(textValue);
                     editText.setHint(getResources().getString(R.string.string_modify_text));
                 } else {
                     editText.setError("Please enter some value");

@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
 import com.example.anurag.nanodegreeinventoryapp.Classes.ProductDetails;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
@@ -47,6 +49,17 @@ public class PostDatabase {
         return mdatabase.update(MyHelper.TABLE_NAME, values, MyHelper.COLUMN_NAME + " =?", selectionArgs);
     }
 
+    public int getQuantity(String name) {
+        int i=0;
+        String[] columns = {MyHelper.COLUMN_QUANTITY};
+        String[] whereArgs = {name};
+        Cursor cursor = mdatabase.query(MyHelper.TABLE_NAME, columns, MyHelper.COLUMN_NAME + "=?", whereArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            i= cursor.getInt(cursor.getColumnIndex(MyHelper.COLUMN_QUANTITY));
+        }
+        return i;
+
+    }
 
     public ArrayList<ProductDetails> getAllItems() {
         ArrayList<ProductDetails> list = new ArrayList<>();

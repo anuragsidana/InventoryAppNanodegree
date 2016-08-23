@@ -1,5 +1,6 @@
 package com.example.anurag.nanodegreeinventoryapp.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.anurag.nanodegreeinventoryapp.Classes.MyApplication;
 import com.example.anurag.nanodegreeinventoryapp.Classes.ProductDetails;
@@ -25,6 +27,28 @@ public class PopUpItem extends AppCompatActivity implements View.OnClickListener
     Button buttonSave;
     ImageView imageView;
     Bitmap bitmap = null;
+
+    public static Bitmap decodeUri(Context c, Uri uri, final int requiredSize)
+            throws FileNotFoundException {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o);
+
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+
+        while (true) {
+            if (width_tmp / 2 < requiredSize || height_tmp / 2 < requiredSize)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o2);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,22 +76,24 @@ public class PopUpItem extends AppCompatActivity implements View.OnClickListener
             case 0:
                 if (resultCode == RESULT_OK) {
                     Uri targetUri = data.getData();
-
                     try {
-                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                        bitmap = decodeUri(this, targetUri, 200);
                         imageView.setImageBitmap(bitmap);
                         imageText.setText("Uploaded");
-
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
+
                 }
         }
     }
 
-
     public boolean validate(String name, String price, String quantity) {
         boolean valid = true;
+        if (bitmap == null) {
+            valid = false;
+            Toast.makeText(this, "Please upload an image", Toast.LENGTH_LONG).show();
+        }
 
         if (name.isEmpty() || name.length() < 3) {
             valid = false;
@@ -93,12 +119,7 @@ public class PopUpItem extends AppCompatActivity implements View.OnClickListener
             current.setProductName(name);
             current.setQuantity(Integer.parseInt(quantity));
             current.setPrice(Integer.parseInt(price));
-            if (bitmap != null) {
-                current.setImage(bitmap);
-            } else {
-                current.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.no_img));
-            }
-
+            current.setImage(bitmap);
             MyApplication.getWritableDatabase().insertItem(current);
             finish();
 

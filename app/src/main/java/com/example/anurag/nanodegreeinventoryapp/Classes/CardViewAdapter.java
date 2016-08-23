@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,13 +57,21 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyHold
         holder.itemPrice.setText(current.getPrice() + "");
         holder.itemName.setText(current.getProductName());
         holder.imageView.setImageBitmap(current.getImage());
+        holder.saleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int quantity=MyApplication.getWritableDatabase().getQuantity(current.getProductName());
+                quantity=quantity-1;
+                MyApplication.getWritableDatabase().updateItemQuantity(current.getProductName(),quantity);
+                holder.itemQuantity.setText(quantity+" Pieces");
+            }
+        });
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ItemDetailsActivity.class);
                 intent.putExtra("name", current.getProductName());
                 intent.putExtra("price", current.getPrice());
-                intent.putExtra("quantity", current.getQuantity());
                 intent.putExtra("image", getBitmapAsByteArray(current.getImage()));
                 context.startActivity(intent);
             }
@@ -83,6 +92,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyHold
         TextView itemName;
         CardView cardView;
         ImageView imageView;
+        Button saleButton;
 
         public MyHolder(View itemView) {
             super(itemView);
@@ -92,6 +102,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyHold
             itemName = (TextView) itemView.findViewById(R.id.item_name);
             cardView = (CardView) itemView.findViewById(R.id.cardView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
+            saleButton= (Button) itemView.findViewById(R.id.sale);
         }
     }
 }

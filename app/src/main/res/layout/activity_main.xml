@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_margin="@dimen/custom_item_padding"
         android:text="Add Item" />
 
     <android.support.v7.widget.RecyclerView
