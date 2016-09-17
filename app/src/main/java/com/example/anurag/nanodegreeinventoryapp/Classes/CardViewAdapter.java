@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.anurag.nanodegreeinventoryapp.Activities.ItemDetailsActivity;
 import com.example.anurag.nanodegreeinventoryapp.R;
@@ -60,10 +61,17 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyHold
         holder.saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 int quantity=MyApplication.getWritableDatabase().getQuantity(current.getProductName());
-                quantity=quantity-1;
-                MyApplication.getWritableDatabase().updateItemQuantity(current.getProductName(),quantity);
-                holder.itemQuantity.setText(quantity+" Pieces");
+
+                if(quantity>0) {
+                    quantity = quantity - 1;
+                    MyApplication.getWritableDatabase().updateItemQuantity(current.getProductName(), quantity);
+                    holder.itemQuantity.setText(quantity + " Pieces");
+                }
+                else {
+                    Toast.makeText(context,"No more items left",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         holder.cardView.setOnClickListener(new View.OnClickListener() {

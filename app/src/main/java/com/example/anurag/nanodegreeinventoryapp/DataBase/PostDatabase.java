@@ -111,12 +111,8 @@ public class PostDatabase {
                 COLUMN_QUANTITY + " INTEGER, " +
                 COLUMN_IMAGE + " BLOB );";
         private static String DROP_TABLE_ITEMS = "DROP TABLE IF EXISTS " + TABLE_NAME;
-        private Context mContext;
-
-
         public MyHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
-            Log.d("job", "inside MyHelper const");
         }
 
         @Override

@@ -61,8 +61,9 @@ public class ItemDetailsActivity extends AppCompatActivity implements View.OnCli
         int id = v.getId();
         switch (id) {
             case R.id.sale_button:
-                if (quantity > 0) {
+
                     quantity=MyApplication.getWritableDatabase().getQuantity(name);
+                if (quantity > 0) {
                     quantity=quantity-1;
                     MyApplication.getWritableDatabase().updateItemQuantity(name,quantity);
                     tQuantity.setText(quantity + "");
@@ -73,13 +74,14 @@ public class ItemDetailsActivity extends AppCompatActivity implements View.OnCli
             case R.id.modify_button:
                 EditText editText = (EditText) findViewById(R.id.modify_text);
                 String textValue = editText.getText().toString();
-                if (!textValue.isEmpty()) {
+                int textValueCount= Integer.parseInt(textValue);
+                if (!textValue.isEmpty() && textValueCount>=0) {
                     Log.d("value", Integer.parseInt(textValue) + "");
-                    MyApplication.getWritableDatabase().updateItemQuantity(name, Integer.parseInt(textValue));
+                    MyApplication.getWritableDatabase().updateItemQuantity(name,textValueCount);
                     tQuantity.setText(textValue);
                     editText.setHint(getResources().getString(R.string.string_modify_text));
                 } else {
-                    editText.setError("Please enter some value");
+                    editText.setError("Please enter some valid value");
                 }
                 break;
             case R.id.delete_button:
